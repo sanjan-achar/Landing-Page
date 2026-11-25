@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="512" height="512" role="img" aria-label="Clutchh icon">
+  <defs>
+    <path id="gear-tooth" d="M 164 91.1 L 179.5 92.6 Q 183 93 183 96 L 183 104 Q 183 107 179.5 107.4 L 164 108.9 Z" />
+  </defs>
+  <g fill="#7367F0">
+    <path d="M 163.05 125.47 A 68 68 0 1 1 163.05 74.53 L 138.94 84.27 A 42 42 0 1 0 138.94 115.73 Z" />
+    <use href="#gear-tooth" transform="rotate(30 100 100)" />
+    <use href="#gear-tooth" transform="rotate(60 100 100)" />
+    <use href="#gear-tooth" transform="rotate(90 100 100)" />
+    <use href="#gear-tooth" transform="rotate(120 100 100)" />
+    <use href="#gear-tooth" transform="rotate(150 100 100)" />
+    <use href="#gear-tooth" transform="rotate(180 100 100)" />
+    <use href="#gear-tooth" transform="rotate(210 100 100)" />
+    <use href="#gear-tooth" transform="rotate(240 100 100)" />
+    <use href="#gear-tooth" transform="rotate(270 100 100)" />
+    <use href="#gear-tooth" transform="rotate(300 100 100)" />
+    <use href="#gear-tooth" transform="rotate(330 100 100)" />
+  </g>
+</svg>
