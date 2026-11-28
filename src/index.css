@@ -256,6 +256,11 @@ h1 span::after {
   cursor: pointer;
 }
 
+.notify-form button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .form-message {
   min-height: 18px;
   margin: 9px 0 0 4px;
@@ -265,6 +270,14 @@ h1 span::after {
 
 .form-message.visible {
   color: #6157bf;
+}
+
+.form-message.visible.form-message--success {
+  color: #16a34a;
+}
+
+.form-message.visible.form-message--error {
+  color: #dc2626;
 }
 
 .hero-proof {

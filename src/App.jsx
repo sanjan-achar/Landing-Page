@@ -109,7 +109,8 @@ function ProductPreview() {
 
 function App() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [notifyModalOpen, setNotifyModalOpen] = useState(false);
   const launchUpdatesButtonRef = useRef(null);
   const modalEmailInputRef = useRef(null);
@@ -119,12 +120,59 @@ function App() {
     setNotifyModalOpen(true);
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    if (!email.trim()) return;
-    setMessage("Thanks! This preview isn't connected to a mailing list yet.");
-    setEmail("");
+    const form = event.currentTarget;
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+
+    if (!accessKey) {
+      setSubmissionStatus({
+        type: "error",
+        message: "Signup is temporarily unavailable. Please try again later.",
+      });
+      console.error("Waitlist submission requires VITE_WEB3FORMS_ACCESS_KEY.");
+      return;
+    }
+
+    const formData = new FormData(form);
+    formData.append("access_key", accessKey);
+    formData.append("subject", "New Waitlist Signup - Clutchh Bengaluru");
+
+    setIsSubmitting(true);
+    setSubmissionStatus(null);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || `Request failed with status ${response.status}`);
+      }
+
+      setSubmissionStatus({
+        type: "success",
+        message: "You're on the list! We'll notify you at launch.",
+      });
+      setEmail("");
+    } catch (error) {
+      console.error("Waitlist submission failed:", error);
+      setSubmissionStatus({
+        type: "error",
+        message: "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
+
+  const submitButtonText = isSubmitting
+    ? "Submitting..."
+    : submissionStatus?.type === "success"
+      ? "Subscribed ✓"
+      : "Get launch updates";
 
   useEffect(() => {
     if (!notifyModalOpen) return undefined;
@@ -198,17 +246,28 @@ function App() {
             <input
               id="email"
               type="email"
+              name="email"
               placeholder="Your email address"
               value={email}
               onChange={(event) => {
                 setEmail(event.target.value);
-                setMessage("");
+                setSubmissionStatus(null);
               }}
               required
             />
-            <button type="submit">Get launch updates <ArrowUpRight /></button>
+            <button type="submit" disabled={isSubmitting}>
+              {submitButtonText}
+              {!isSubmitting && submissionStatus?.type !== "success" && <ArrowUpRight />}
+            </button>
           </form>
-          {message && <p className="form-message visible" aria-live="polite">{message}</p>}
+          {submissionStatus && (
+            <p
+              className={`form-message visible form-message--${submissionStatus.type}`}
+              role={submissionStatus.type === "error" ? "alert" : "status"}
+            >
+              {submissionStatus.message}
+            </p>
+          )}
           <div className="hero-proof">
             <div className="vehicle-tags" aria-label="Cars and two-wheelers in Bengaluru">
               <span>Cars</span>
@@ -288,17 +347,28 @@ function App() {
                 ref={modalEmailInputRef}
                 id="notify-modal-email"
                 type="email"
+                name="email"
                 placeholder="Your email address"
                 value={email}
                 onChange={(event) => {
                   setEmail(event.target.value);
-                  setMessage("");
+                  setSubmissionStatus(null);
                 }}
                 required
               />
-              <button type="submit">Get launch updates <ArrowUpRight /></button>
+              <button type="submit" disabled={isSubmitting}>
+                {submitButtonText}
+                {!isSubmitting && submissionStatus?.type !== "success" && <ArrowUpRight />}
+              </button>
             </form>
-            {message && <p className="form-message visible" aria-live="polite">{message}</p>}
+            {submissionStatus && (
+              <p
+                className={`form-message visible form-message--${submissionStatus.type}`}
+                role={submissionStatus.type === "error" ? "alert" : "status"}
+              >
+                {submissionStatus.message}
+              </p>
+            )}
           </section>
         </div>,
         document.body,
